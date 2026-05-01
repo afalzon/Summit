@@ -69,6 +69,70 @@ Run `npm start` to launch the local webpack dev server.
 
 This repository includes VS Code tasks for dependency install, development build, production build, packaging the extension artifact, watch mode, and starting the local dev server.
 
+## Chromium build workflow (Brave/Chrome/Edge)
+
+Use this workflow if you want to maintain Summit and publish/test a Chromium build from your laptop or NAS worker.
+
+1. Install dependencies:
+  - `npm ci`
+2. Create production Chromium build:
+  - `npm run build:chromium`
+3. Package distributable zip:
+  - `npm run package:chromium`
+
+If Node is not installed locally, run the Docker helper script instead:
+- `./scripts/build-chromium-docker.sh`
+
+Build output paths:
+- Unpacked extension: `dist/`
+- Packaged zip artifact: `artifacts/Summit-chromium.zip`
+
+### Load in Brave (local testing)
+
+1. Open `brave://extensions`.
+2. Enable **Developer mode**.
+3. Click **Load unpacked**.
+4. Select the `dist/` folder from this repo.
+5. Open Terrain and verify Summit menu/routes render.
+
+### Suggested CI/worker pattern
+
+For reproducible releases from your NAS worker or GitHub Actions:
+
+1. On push to your maintenance branch, run:
+  - `npm ci`
+  - `npm test`
+  - `npm run package:chromium`
+2. Publish `artifacts/Summit-chromium.zip` as a build artifact.
+
+This keeps local development fast while ensuring release artifacts are always built in a clean environment.
+
+## Firefox build workflow
+
+Use this workflow to generate a Firefox-compatible package from the same source.
+
+1. Build Firefox variant:
+  - `npm run build:firefox`
+2. Package Firefox artifact:
+  - `npm run package:firefox`
+
+If Node is not installed locally, run the Docker helper script instead:
+- `./scripts/build-firefox-docker.sh`
+
+Build output paths:
+- Unpacked extension: `dist/` (with Firefox manifest applied)
+- Packaged zip artifact: `artifacts/Summit-firefox.zip`
+
+### Load in Firefox (local testing)
+
+1. Open `about:debugging`.
+2. Select **This Firefox**.
+3. Click **Load Temporary Add-on...**.
+4. Choose the generated `dist/manifest.json` file.
+5. Open Terrain and verify Summit menu/routes render.
+
+Note: temporary add-ons are removed when Firefox closes. For persistent distribution, the extension needs normal Firefox signing/publishing.
+
 ## Examples
 
 A few of the features are showcased below. [Visit the Wiki to see the full list of features and how-to guides](https://github.com/pete-mc/Summit/wiki).
